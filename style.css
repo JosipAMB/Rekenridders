@@ -1,0 +1,41 @@
+body {
+    text-align: center;
+
+    background-image: url("Background_2.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+header {
+    margin-top: 50px;
+    font-size: 25px;
+}
+
+main {
+    margin-top: 250px;
+}
+
+footer {
+    margin-top: 400px;
+}
+
+.play-button {
+    font-size: 28px;
+    padding: 15px 40px;
+    color: white;
+    background: linear-gradient(#4CAF50, #2e7d32);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 6px #1b5e20;
+    transition: all 0.15s ease;
+}
+
+.play-button:hover {
+    background: linear-gradient(#66bb6a, #388e3c);
+}
+
+.play-button:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px #1b5e20;
+}
