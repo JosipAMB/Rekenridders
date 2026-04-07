@@ -7,16 +7,16 @@ class Level1Scene extends Phaser.Scene {
         this.load.image('background', 'Assets/Background_2.png');
 
         this.load.spritesheet('idle', 'Assets/IDLE.png', {
-            frameWidth: 64,
-            frameHeight: 64
+            frameWidth: 96,
+            frameHeight: 84
         });
         this.load.spritesheet('run', 'Assets/RUN.png', {
-            frameWidth: 64,
-            frameHeight: 64
+            frameWidth: 96,
+            frameHeight: 84
         });
         this.load.spritesheet('jump', 'Assets/JUMP.png', {
-            frameWidth: 64,
-            frameHeight: 64
+            frameWidth: 96,
+            frameHeight: 84
         });
     }
 
