@@ -1,7 +1,5 @@
 class Level1Scene extends Phaser.Scene {
-    constructor() {
-        super('Level1Scene');
-    }
+
 
     preload() {
         this.load.image('background', 'Assets/Background_2.png');
@@ -29,17 +27,13 @@ class Level1Scene extends Phaser.Scene {
             .setOrigin(0, 0)
             .setDisplaySize(W, H);
 
-        // platform onderaan
-        this.platform = this.physics.add.staticImage(W / 2, H - 20, null)
-            .setDisplaySize(W, 40)
-            .setVisible(false)
-            .refreshBody();
-
         // speler
         this.player = this.physics.add.sprite(100, H - 150, 'idle');
         this.player.setScale(2);
+        this.player.body.setSize(28, 30);    // physics body kleiner maken
+        this.player.body.setOffset(28, 30);  // body goed uitlijnen met sprite
 
-        this.physics.add.collider(this.player, this.platform);
+        this.physics.add.collider(this.player, this.platforms);
         this.cursors = this.input.keyboard.createCursorKeys();
 
         // animaties
@@ -65,23 +59,54 @@ class Level1Scene extends Phaser.Scene {
         });
 
         this.player.play('idle');
+
+        // platforms groep aanmaken
+        this.platforms = this.physics.add.staticGroup();
+
+        // grond onderaan - volle breedte
+        this.platforms.create(W / 2, H - 10, null)
+            .setDisplaySize(W, 40)
+            .setTint(0x8B4513)
+            .setVisible(true)
+            .refreshBody();
+
+        // platforms
+        this.platforms.create(300, H - 150, null)
+            .setDisplaySize(200, 20)
+            .setTint(0x8B4513)
+            .refreshBody();
+
+        this.platforms.create(600, H - 250, null)
+            .setDisplaySize(200, 20)
+            .setTint(0x8B4513)
+            .refreshBody();
+
+        this.platforms.create(200, H - 350, null)
+            .setDisplaySize(200, 20)
+            .setTint(0x8B4513)
+            .refreshBody();
+
+        // collider
+        this.physics.add.collider(this.player, this.platforms);
     }
 
     update() {
+        const inLucht = !this.player.body.blocked.down;
+
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-200);
             this.player.setFlipX(true);
-            this.player.play('run', true);
+            if (!inLucht) this.player.play('run', true);
         } else if (this.cursors.right.isDown) {
             this.player.setVelocityX(200);
             this.player.setFlipX(false);
-            this.player.play('run', true);
+            if (!inLucht) this.player.play('run', true);
         } else {
             this.player.setVelocityX(0);
-            this.player.play('idle', true);
+            if (!inLucht) this.player.play('idle', true);
         }
 
-        if (this.cursors.up.isDown && this.player.body.blocked.down) {
+        if (this.cursors.up.isDown && !inLucht) {
             this.player.setVelocityY(-400);
             this.player.play('jump', true);
         }
