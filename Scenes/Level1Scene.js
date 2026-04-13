@@ -1,9 +1,11 @@
 import { genereerSom } from '../Systems/Mathgenerator.js';
+import { HealthSysteem } from '../Systems/Healthsysteem.js';
+import { Chest } from '../Systems/Chest.js';
 
     class Level1Scene extends Phaser.Scene {
     constructor() {
         super('Level1Scene');
-    }
+    }   
 
     preload() {
         this.load.image('background', 'Assets/Background_2.png');
@@ -25,6 +27,14 @@ import { genereerSom } from '../Systems/Mathgenerator.js';
     create() {
         const W = this.scale.width;
         const H = this.scale.height;
+
+        this.health = new HealthSysteem(this);
+
+        // hartjes tekst bovenin scherm
+        this.hpTekst = this.add.text(20, 20, '❤️❤️❤️❤️❤️', {
+            fontSize: '32px'
+        })
+        .setScrollFactor(0);  // vast aan scherm
 
         // achtergrond eerst
         this.add.image(0, 0, 'background')
@@ -64,11 +74,8 @@ import { genereerSom } from '../Systems/Mathgenerator.js';
         this.physics.add.collider(this.player, this.platforms);
 
         // kist
-        this.chest = this.physics.add.staticImage(400, H - 70, null)
-            .setDisplaySize(50, 50)
-            .setTint(0xFFD700)
-            .refreshBody();
-        this.physics.add.collider(this.player, this.chest);
+        this.chest = new Chest(this, 400, H - 70);
+        this.physics.add.collider(this.player, this.chest.image);
 
         // toetsen
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -100,7 +107,7 @@ import { genereerSom } from '../Systems/Mathgenerator.js';
 
         const bijKist = Phaser.Math.Distance.Between(
             this.player.x, this.player.y,
-            this.chest.x, this.chest.y
+            this.chest.image.x, this.chest.image.y  
         ) < 80;
 
         if (bijKist && Phaser.Input.Keyboard.JustDown(this.keyE)) {
@@ -127,37 +134,19 @@ import { genereerSom } from '../Systems/Mathgenerator.js';
     }
 
     openKist() {
-        const som = genereerSom();
+        this.chest.open(this.health, () => this.updateHp());
+    }
 
-        // zet tekst vast aan camera zodat het altijd zichtbaar is
-        const vraagTekst = this.add.text(
-            this.scale.width / 2,
-            this.scale.height / 4,
-            som.vraag,
-            { fontSize: '48px', fill: '#ffffff', backgroundColor: '#000000', padding: { x: 20, y: 10 } }
-        )
-        .setOrigin(0.5)
-        .setScrollFactor(0);  // ← dit zorgt dat tekst vast blijft aan scherm
-
-        som.antwoorden.forEach((antwoord, index) => {
-            const knop = this.add.text(
-                150 + (index * 220),
-                this.scale.height / 2,
-                antwoord,
-                { fontSize: '36px', fill: '#ffffff', backgroundColor: '#4CAF50', padding: { x: 20, y: 10 } }
-            )
-            .setOrigin(0.5)
-            .setScrollFactor(0)  // ← ook vast aan scherm
-            .setInteractive();
-
-            knop.on('pointerdown', () => {
-                if (antwoord === som.juistAntwoord) {
-                    console.log('Goed!');
-                } else {
-                    console.log('Fout!');
-                }
-            });
-        });
+    updateHp() {
+        let hartjes = '';
+        for (let i = 0; i < this.health.maxHp; i++) {
+            if (i < this.health.huidigHp) {
+                hartjes += '❤️';
+            } else {
+                hartjes += '🖤';
+            }
+        }
+        this.hpTekst.setText(hartjes);
     }
 }
 
