@@ -25,6 +25,7 @@ import { Chest } from '../Systems/Chest.js';
     }
 
     create() {
+        this.spelActief = true;
         const W = this.scale.width;
         const H = this.scale.height;
 
@@ -100,6 +101,17 @@ import { Chest } from '../Systems/Chest.js';
             frameRate: 8,
             repeat: 0
         });
+        
+        // deur naar eindbaas
+        this.deur = this.physics.add.staticImage(1200, H - 70, null)
+            .setDisplaySize(60, 80)
+            .setTint(0xff0000)
+            .refreshBody();
+
+        this.physics.add.overlap(this.player, this.deur, () => {
+            console.log('HP bij deur:', this.health.huidigHp);
+            this.scene.start('BossScene', { hp: this.health.huidigHp });
+        });
     }
 
     update() {
@@ -133,20 +145,26 @@ import { Chest } from '../Systems/Chest.js';
         }
     }
 
-    openKist() {
-        this.chest.open(this.health, () => this.updateHp());
-    }
-
     updateHp() {
         let hartjes = '';
         for (let i = 0; i < this.health.maxHp; i++) {
-            if (i < this.health.huidigHp) {
-                hartjes += '❤️';
-            } else {
-                hartjes += '🖤';
-            }
+            hartjes += i < this.health.huidigHp ? '❤️' : '🖤';
         }
         this.hpTekst.setText(hartjes);
+
+        if (this.health.huidigHp <= 0) {
+            this.spelActief = false;
+            this.add.text(
+                this.scale.width / 2,
+                this.scale.height / 2,
+                'Game Over! 💀',
+                { fontSize: '64px', fill: '#ff0000', backgroundColor: '#000000', padding: { x: 20, y: 10 } }
+            ).setOrigin(0.5).setScrollFactor(0);
+        }
+    }
+
+    openKist() {
+        this.chest.open(this.health, () => this.updateHp());
     }
 }
 

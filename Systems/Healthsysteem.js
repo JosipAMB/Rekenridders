@@ -1,8 +1,8 @@
 export class HealthSysteem {
-    constructor(scene, maxHp = 5) {
-        this.scene = scene;
-        this.maxHp = maxHp;
-        this.huidigHp = maxHp;
+    constructor(scene, maxHp = 5, beginHp = null) {
+    this.scene = scene;
+    this.maxHp = maxHp;
+    this.huidigHp = beginHp !== null ? beginHp : maxHp;
     }
 
     schade() {

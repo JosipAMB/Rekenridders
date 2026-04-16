@@ -1,4 +1,5 @@
 import Level1Scene from './Scenes/Level1Scene.js';
+import BossScene from './Scenes/BossScene.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -10,7 +11,7 @@ const config = {
             gravity: { y: 300 }
         }
     },
-    scene: [Level1Scene]
+    scene: [Level1Scene, BossScene]
 };
 
 document.getElementById('playBtn').addEventListener('click', () => {
