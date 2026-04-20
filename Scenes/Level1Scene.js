@@ -22,32 +22,38 @@ class Level1Scene extends Phaser.Scene {
 
         this.health = new HealthSysteem(this);
 
-        // hartjes
-        this.hpTekst = this.add.text(20, 20, '❤️❤️❤️❤️❤️', { fontSize: '32px' })
-            .setScrollFactor(0);
-
         // achtergrond
         this.add.image(0, 0, 'background')
             .setOrigin(0, 0)
             .setDisplaySize(4000, H)
-            .setScrollFactor(0.5);  // beweegt mee maar langzamer dan camera
+            .setScrollFactor(0.5);
+
+        // hartjes
+        this.hpTekst = this.add.text(20, 20, '❤️❤️❤️❤️❤️', { fontSize: '32px' })
+            .setScrollFactor(0);
 
         // platforms
         this.platforms = this.physics.add.staticGroup();
 
-        // grond
-        this.platforms.create(2000, H - 10, null)
-            .setDisplaySize(4000, 40)
-            .setTint(0x8B4513)
-            .refreshBody();
+        // grond met gaten
+        this.platforms.create(600, H - 10, null).setDisplaySize(1200, 40).refreshBody();
+        this.platforms.create(1800, H - 10, null).setDisplaySize(600, 40).refreshBody();
+        this.platforms.create(2700, H - 10, null).setDisplaySize(800, 40).refreshBody();
+        this.platforms.create(3800, H - 10, null).setDisplaySize(800, 40).refreshBody();
 
-        // platforms
-        this.platforms.create(400, H - 150, null).setDisplaySize(200, 20).setTint(0x8B4513).refreshBody();
-        this.platforms.create(700, H - 250, null).setDisplaySize(200, 20).setTint(0x8B4513).refreshBody();
-        this.platforms.create(1000, H - 150, null).setDisplaySize(200, 20).setTint(0x8B4513).refreshBody();
-        this.platforms.create(1300, H - 300, null).setDisplaySize(200, 20).setTint(0x8B4513).refreshBody();
-        this.platforms.create(1600, H - 200, null).setDisplaySize(200, 20).setTint(0x8B4513).refreshBody();
-        this.platforms.create(1900, H - 350, null).setDisplaySize(200, 20).setTint(0x8B4513).refreshBody();
+        // zwevende platforms
+        this.platforms.create(500, H - 150, null).setDisplaySize(150, 20).refreshBody();
+        this.platforms.create(800, H - 280, null).setDisplaySize(150, 20).refreshBody();
+        this.platforms.create(1050, H - 180, null).setDisplaySize(150, 20).refreshBody();
+        this.platforms.create(1300, H - 320, null).setDisplaySize(150, 20).refreshBody();
+        this.platforms.create(1550, H - 220, null).setDisplaySize(150, 20).refreshBody();
+        this.platforms.create(1750, H - 350, null).setDisplaySize(150, 20).refreshBody();
+        this.platforms.create(2000, H - 200, null).setDisplaySize(150, 20).refreshBody();
+        this.platforms.create(2250, H - 300, null).setDisplaySize(150, 20).refreshBody();
+        this.platforms.create(2500, H - 180, null).setDisplaySize(150, 20).refreshBody();
+        this.platforms.create(2800, H - 280, null).setDisplaySize(150, 20).refreshBody();
+        this.platforms.create(3100, H - 350, null).setDisplaySize(150, 20).refreshBody();
+        this.platforms.create(3400, H - 220, null).setDisplaySize(150, 20).refreshBody();
 
         // speler
         this.player = this.physics.add.sprite(100, H - 150, 'idle');
@@ -58,15 +64,18 @@ class Level1Scene extends Phaser.Scene {
 
         // camera
         this.cameras.main.startFollow(this.player);
+        this.cameras.main.setBounds(0, 0, 4000, H);
+        this.physics.world.setBounds(0, 0, 4000, H);
 
         // colliders
         this.physics.add.collider(this.player, this.platforms);
 
-        // meerdere kisten
+        // kisten
         this.kisten = [
-            new Chest(this, 400, H - 70),
-            new Chest(this, 1000, H - 70),
-            new Chest(this, 1600, H - 70),
+            new Chest(this, 800, H - 330),
+            new Chest(this, 1750, H - 400),
+            new Chest(this, 2250, H - 350),
+            new Chest(this, 3100, H - 400),
         ];
         this.kisten.forEach(kist => {
             this.physics.add.collider(this.player, kist.image);
@@ -82,7 +91,7 @@ class Level1Scene extends Phaser.Scene {
         this.anims.create({ key: 'jump', frames: this.anims.generateFrameNumbers('jump', { start: 0, end: 4 }), frameRate: 8, repeat: 0 });
 
         // deur
-        this.deur = this.physics.add.staticImage(3800, H - 70, null)
+        this.deur = this.physics.add.staticImage(4000, H - 70, null)
             .setDisplaySize(60, 80)
             .setTint(0xff0000)
             .refreshBody();
