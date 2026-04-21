@@ -36,10 +36,8 @@ class Level1Scene extends Phaser.Scene {
         this.platforms = this.physics.add.staticGroup();
 
         // grond met gaten
-        this.platforms.create(600, H - 10, null).setDisplaySize(1200, 40).refreshBody();
-        this.platforms.create(1800, H - 10, null).setDisplaySize(600, 40).refreshBody();
-        this.platforms.create(2700, H - 10, null).setDisplaySize(800, 40).refreshBody();
-        this.platforms.create(3800, H - 10, null).setDisplaySize(800, 40).refreshBody();
+        this.platforms.create(300, H - 10, null).setDisplaySize(1200, 40).refreshBody();
+        this.platforms.create(4000, H - 10, null).setDisplaySize(800, 40).refreshBody();
 
         // zwevende platforms
         this.platforms.create(500, H - 150, null).setDisplaySize(150, 20).refreshBody();
@@ -104,6 +102,7 @@ class Level1Scene extends Phaser.Scene {
     update() {
         const inLucht = !this.player.body.blocked.down;
         const H = this.H;
+        if (!this.spelActief) return; // zorgt dat spel stopt zodra dood
 
         // dood vallen
         if (this.player.y > H + 100) {

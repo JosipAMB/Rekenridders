@@ -3,6 +3,7 @@ import { genereerSom } from '../Systems/Mathgenerator.js';
 export class Chest {
     constructor(scene, x, y) {
         this.scene = scene;
+        this.isOpen = false;
 
         this.image = scene.physics.add.staticImage(x, y, null)
             .setDisplaySize(50, 50)
@@ -11,6 +12,11 @@ export class Chest {
     }
 
     open(health, updateHp) {
+        if (this.isOpen) return; 
+        if (!this.scene.spelActief) return;
+
+        this.isOpen = true;
+
         const som = genereerSom();
         const elementen = [];
 
@@ -25,9 +31,11 @@ export class Chest {
 
         elementen.push(vraagTekst);
 
+        const startX = this.scene.scale.width / 2 - ((som.antwoorden.length - 1) * 220) / 2;
+
         som.antwoorden.forEach((antwoord, index) => {
             const knop = this.scene.add.text(
-                150 + (index * 220),
+                startX + (index * 220),
                 this.scene.scale.height / 2,
                 antwoord,
                 { fontSize: '36px', fill: '#ffffff', backgroundColor: '#4CAF50', padding: { x: 20, y: 10 } }
@@ -44,6 +52,7 @@ export class Chest {
                 } else {
                     health.schade();
                 }
+
                 updateHp();
                 elementen.forEach(el => el.destroy());
             });

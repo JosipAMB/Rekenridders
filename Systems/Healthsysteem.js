@@ -9,9 +9,6 @@ export class HealthSysteem {
         if (this.huidigHp > 0) {
             this.huidigHp--;
         }
-        if (this.huidigHp <= 0) {
-            this.gameOver();
-        }
     }
 
     genees() {
