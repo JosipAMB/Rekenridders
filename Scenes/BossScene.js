@@ -26,7 +26,7 @@ class BossScene extends Phaser.Scene {
 
         // draak
         this.draak = this.add.image(W - 200, H / 2, 'draak')
-            .setScale(5);
+            .setScale(Math.min(5, Math.max(2, W / 160)));
 
         // boss hp (FIX)
         this.bossMaxHp = 5;
@@ -46,6 +46,10 @@ class BossScene extends Phaser.Scene {
         this.updateHp();
         this.updateBossHp();
         this.toonSom();
+        this.scale.on('resize', this.handleResize, this);
+        this.events.once('shutdown', () => {
+            this.scale.off('resize', this.handleResize, this);
+        });
     }
 
     toonSom() {
@@ -55,14 +59,14 @@ class BossScene extends Phaser.Scene {
         const elementen = [];
 
         const vraagTekst = this.add.text(
-            this.scale.width / 2,
-            this.scale.height / 4,
+            0,
+            0,
             som.vraag,
             {
                 fontSize: '48px',
                 fill: '#ffffff',
                 backgroundColor: '#000000',
-                padding: { x: 20, y: 10 }
+                padding: { x: 16, y: 10 }
             }
         ).setOrigin(0.5);
 
@@ -70,14 +74,14 @@ class BossScene extends Phaser.Scene {
 
         som.antwoorden.forEach((antwoord, index) => {
             const knop = this.add.text(
-                150 + (index * 220),
-                this.scale.height / 2,
+                0,
+                0,
                 antwoord,
                 {
                     fontSize: '36px',
                     fill: '#ffffff',
                     backgroundColor: '#4CAF50',
-                    padding: { x: 20, y: 10 }
+                    padding: { x: 14, y: 10 }
                 }
             )
             .setOrigin(0.5)
@@ -89,6 +93,7 @@ class BossScene extends Phaser.Scene {
                 if (!this.spelActief) return;
 
                 elementen.forEach(el => el.destroy());
+                this.activeQuestionElements = null;
 
                 if (antwoord === som.juistAntwoord) {
                     this.bossSchade();
@@ -99,6 +104,8 @@ class BossScene extends Phaser.Scene {
                 }
             });
         });
+        this.activeQuestionElements = elementen;
+        this.layoutQuestion(this.scale.width, this.scale.height);
     }
 
     bossSchade() {
@@ -113,7 +120,7 @@ class BossScene extends Phaser.Scene {
                 this.scale.height / 2,
                 'Je hebt gewonnen!',
                 {
-                    fontSize: '64px',
+                    fontSize: `${Math.min(64, this.scale.width / 8)}px`,
                     fill: '#ffffff',
                     backgroundColor: '#000000',
                     padding: { x: 20, y: 10 }
@@ -141,7 +148,7 @@ class BossScene extends Phaser.Scene {
                 this.scale.height / 2,
                 'Game Over!',
                 {
-                    fontSize: '64px',
+                    fontSize: `${Math.min(64, this.scale.width / 8)}px`,
                     fill: '#ff0000',
                     backgroundColor: '#000000',
                     padding: { x: 20, y: 10 }
@@ -158,6 +165,33 @@ class BossScene extends Phaser.Scene {
         }
 
         this.bossHpTekst.setText(draakjes);
+    }
+
+    handleResize(gameSize) {
+        const { width, height } = gameSize;
+        this.children.list
+            .find(child => child.texture?.key === 'background')
+            ?.setDisplaySize(width, height);
+        this.draak.setPosition(width - Math.min(200, width * 0.3), height / 2)
+            .setScale(Math.min(5, Math.max(2, width / 160)));
+        this.bossHpTekst.setPosition(width - Math.min(200, width * 0.3), 50);
+        this.hpTekst.setPosition(20, 20);
+        this.layoutQuestion(width, height);
+    }
+
+    layoutQuestion(width, height) {
+        if (!this.activeQuestionElements) return;
+        this.activeQuestionElements[0]
+            .setPosition(width / 2, height * 0.24)
+            .setFontSize(Math.min(48, width / 9));
+        this.activeQuestionElements.slice(1).forEach((knop, index) => {
+            knop
+                .setPosition(
+                    width * (index % 2 === 0 ? 0.28 : 0.72),
+                    height * (index < 2 ? 0.48 : 0.68)
+                )
+                .setFontSize(Math.min(36, width / 12));
+        });
     }
 }
 
